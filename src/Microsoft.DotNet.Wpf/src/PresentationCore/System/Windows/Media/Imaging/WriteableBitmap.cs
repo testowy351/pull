@@ -319,34 +319,10 @@ namespace System.Windows.Media.Imaging
         /// </summary>
         public void Unlock()
         {
-            WritePreamble();
-
-            if (_lockCount == 0)
-            {
-                throw new InvalidOperationException(SR.Get(SRID.Image_MustBeLocked));
-            }
-            Invariant.Assert(_lockCount > 0, "Lock count should never be negative!");
-
-            _lockCount--;
-            if (_lockCount == 0)
-            {
-                // This makes the back buffer read-only.
-                _pBackBufferLock.Dispose();
-                _pBackBufferLock = null;
-
-                if (_hasDirtyRects)
-                {
-                    SubscribeToCommittingBatch();
-
-                    //
-                    // Notify listeners that we have changed.
-                    //
-                    WritePostscript();
-                }
-            }
+            UnlockInner();
         }
 
-        private void UnlockWithoutSubscribeToCommittingBatch()
+        private void UnlockInner(bool shouldSubscribeToCommittingBatch = true)
         {
             WritePreamble();
 
@@ -362,6 +338,24 @@ namespace System.Windows.Media.Imaging
                 // This makes the back buffer read-only.
                 _pBackBufferLock.Dispose();
                 _pBackBufferLock = null;
+
+                if(shouldSubscribeToCommittingBatch)
+                {
+                    SubscribeToCommittingBatchAndWritePostscript();
+                }
+            }
+        }
+
+        private void SubscribeToCommittingBatchAndWritePostscript()
+        {
+            if (_hasDirtyRects)
+            {
+                SubscribeToCommittingBatch();
+
+                //
+                // Notify listeners that we have changed.
+                //
+                WritePostscript();
             }
         }
 
@@ -814,18 +808,10 @@ namespace System.Windows.Media.Imaging
                 source.CriticalCopyPixels(rcFull, _backBuffer, bufferSize, _backBufferStride.Value);
                 AddDirtyRect(rcFull);
 
-                UnlockWithoutSubscribeToCommittingBatch();
+                UnlockInner(shouldSubscribeToCommittingBatch: false);
             }
 
-            if (_hasDirtyRects)
-            {
-                SubscribeToCommittingBatch();
-
-                //
-                // Notify listeners that we have changed.
-                //
-                WritePostscript();
-            }
+            SubscribeToCommittingBatchAndWritePostscript();
 
             EndInit();
         }

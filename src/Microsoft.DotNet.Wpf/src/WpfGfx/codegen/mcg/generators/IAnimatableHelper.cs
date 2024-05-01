@@ -72,10 +72,7 @@ namespace MS.Internal.MilCodeGen.Helpers
                         AnimationClock clock,
                         HandoffBehavior handoffBehavior)
                     {
-                        if (dp == null)
-                        {
-                            throw new ArgumentNullException("dp");
-                        }
+                        ArgumentNullException.ThrowIfNull(dp);
 
                         if (!AnimationStorage.IsPropertyAnimatable(this, dp))
                         {
@@ -144,10 +141,7 @@ namespace MS.Internal.MilCodeGen.Helpers
                     /// </param>
                     public void BeginAnimation(DependencyProperty dp, AnimationTimeline animation, HandoffBehavior handoffBehavior)
                     {
-                        if (dp == null)
-                        {
-                            throw new ArgumentNullException("dp");
-                        }
+                        ArgumentNullException.ThrowIfNull(dp);
 
                         if (!AnimationStorage.IsPropertyAnimatable(this, dp))
                         {
@@ -203,10 +197,7 @@ namespace MS.Internal.MilCodeGen.Helpers
                     /// </returns>
                     public object GetAnimationBaseValue(DependencyProperty dp)
                     {
-                        if (dp == null)
-                        {
-                            throw new ArgumentNullException("dp");
-                        }
+                        ArgumentNullException.ThrowIfNull(dp);
                     
                         return this.GetValueEntry(
                                 LookupEntry(dp.GlobalIndex),

@@ -1155,7 +1155,7 @@ namespace MS.Internal.AutomationProxies
                         if (_groupsCollection.Contains (hwnd))
                         {
                             _groupsCollection.Remove (hwnd);
-                            WinEventTracker.RemoveToNotificationList (hwnd, _groupEvents, null, 3);
+                            WinEventTracker.RemoveToNotificationList(hwnd, _groupEvents, null, _groupEvents.Length);
                         }
                     }
                     break;
@@ -1171,7 +1171,7 @@ namespace MS.Internal.AutomationProxies
                         if (_groupsCollection.Contains (hwnd) && !SafeNativeMethods.IsWindowVisible (hwnd) && !SafeNativeMethods.IsWindowEnabled (hwnd))
                         {
                             _groupsCollection.Remove (hwnd);
-                            WinEventTracker.RemoveToNotificationList (hwnd, _groupEvents, null, 3);
+                            WinEventTracker.RemoveToNotificationList(hwnd, _groupEvents, null, _groupEvents.Length);
                         }
                     }
                     break;

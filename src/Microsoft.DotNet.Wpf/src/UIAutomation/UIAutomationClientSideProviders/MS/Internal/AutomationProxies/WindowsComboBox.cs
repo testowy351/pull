@@ -828,6 +828,7 @@ namespace MS.Internal.AutomationProxies
                 {
                     editPortionEvents[c]._evtId = (p == ValuePattern.ValueProperty) ? NativeMethods.EventObjectValueChange : NativeMethods.EventObjectStateChange;
                     editPortionEvents[c]._idProp = p;
+                    c++;
                 }
             }
 

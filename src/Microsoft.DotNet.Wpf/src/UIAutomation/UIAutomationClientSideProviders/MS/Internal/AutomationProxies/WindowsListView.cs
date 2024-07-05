@@ -87,7 +87,7 @@ namespace MS.Internal.AutomationProxies
             _createOnEvent = new WinEventTracker.ProxyRaiseEvents (RaiseEvents);
 
             // internally track some of the lv events
-            WinEventTracker.AddToNotificationList (_hwnd, new WinEventTracker.ProxyRaiseEvents (WindowsListView.GroupSpecificEvents), _groupEvents, _groupEvents.Length);
+            WinEventTracker.AddToNotificationList(_hwnd, new WinEventTracker.ProxyRaiseEvents (WindowsListView.GroupSpecificEvents), _groupEvents);
         }
 
         #endregion Constructors
@@ -503,7 +503,7 @@ namespace MS.Internal.AutomationProxies
                         {
                             WindowsSysHeader header = (WindowsSysHeader) WindowsSysHeader.Create (hwndHeader, 0);
                             ReadOnlySpan<WinEventTracker.EvtIdProperty> aEvents = [new WinEventTracker.EvtIdProperty(NativeMethods.EventObjectCreate, TablePattern.ColumnHeadersProperty)];
-                            WinEventTracker.AddToNotificationList(hwndHeader, header._createOnEvent, aEvents, aEvents.Length);
+                            WinEventTracker.AddToNotificationList(hwndHeader, header._createOnEvent, aEvents);
                         }
                     }
                 }
@@ -512,7 +512,7 @@ namespace MS.Internal.AutomationProxies
             if (eventId == InvokePattern.InvokedEvent)
             {
                 ReadOnlySpan<WinEventTracker.EvtIdProperty> aEvents = [new WinEventTracker.EvtIdProperty(NativeMethods.EventObjectSelection, eventId)];
-                WinEventTracker.AddToNotificationList(_hwnd, _createOnEvent, aEvents, aEvents.Length); 
+                WinEventTracker.AddToNotificationList(_hwnd, _createOnEvent, aEvents); 
             }
 
             base.AdviseEventAdded (eventId, aidProps);
@@ -532,7 +532,7 @@ namespace MS.Internal.AutomationProxies
                         {
                             WindowsSysHeader header = (WindowsSysHeader) WindowsSysHeader.Create (hwndHeader, 0);
                             ReadOnlySpan<WinEventTracker.EvtIdProperty> aEvents = [new WinEventTracker.EvtIdProperty(NativeMethods.EventObjectCreate, TablePattern.ColumnHeadersProperty)];
-                            WinEventTracker.RemoveToNotificationList(hwndHeader, aEvents, header._createOnEvent, aEvents.Length);
+                            WinEventTracker.RemoveToNotificationList(hwndHeader, aEvents, header._createOnEvent);
                         }
                     }
                 }
@@ -541,7 +541,7 @@ namespace MS.Internal.AutomationProxies
             if (eventId == InvokePattern.InvokedEvent)
             {
                 ReadOnlySpan<WinEventTracker.EvtIdProperty> aEvents = [new WinEventTracker.EvtIdProperty(NativeMethods.EventObjectSelection, eventId)];
-                WinEventTracker.AddToNotificationList(_hwnd, _createOnEvent, aEvents, aEvents.Length);
+                WinEventTracker.AddToNotificationList(_hwnd, _createOnEvent, aEvents);
             }
 
             base.AdviseEventRemoved(eventId, aidProps);
@@ -1155,7 +1155,7 @@ namespace MS.Internal.AutomationProxies
                         if (_groupsCollection.Contains (hwnd))
                         {
                             _groupsCollection.Remove (hwnd);
-                            WinEventTracker.RemoveToNotificationList(hwnd, _groupEvents, null, _groupEvents.Length);
+                            WinEventTracker.RemoveToNotificationList(hwnd, _groupEvents, null);
                         }
                     }
                     break;
@@ -1171,7 +1171,7 @@ namespace MS.Internal.AutomationProxies
                         if (_groupsCollection.Contains (hwnd) && !SafeNativeMethods.IsWindowVisible (hwnd) && !SafeNativeMethods.IsWindowEnabled (hwnd))
                         {
                             _groupsCollection.Remove (hwnd);
-                            WinEventTracker.RemoveToNotificationList(hwnd, _groupEvents, null, _groupEvents.Length);
+                            WinEventTracker.RemoveToNotificationList(hwnd, _groupEvents, null);
                         }
                     }
                     break;

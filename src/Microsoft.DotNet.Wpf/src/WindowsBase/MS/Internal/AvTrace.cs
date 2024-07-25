@@ -513,7 +513,7 @@ namespace MS.Internal
         static char[] FormatChars = new char[]{ '{', '}' };
     }
 
-    internal delegate void AvTraceEventHandler( AvTraceBuilder traceBuilder, Span<object> parameters, int start );
+    internal delegate void AvTraceEventHandler( AvTraceBuilder traceBuilder, ReadOnlySpan<object> parameters, int start );
 
     internal class AvTraceBuilder
     {

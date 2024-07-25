@@ -273,7 +273,7 @@ namespace MS.Internal
 
             int formatIndex = 0;
 
-            if (parameters != Span<object>.Empty && labels != null && labels.Length > 0)
+            if (!parameters.IsEmpty && labels?.Length > 0)
             {
                 int i = 1, j = 0;
                 for (; i < labels.Length && j < parameters.Length; i++, j++)
@@ -513,7 +513,7 @@ namespace MS.Internal
         static char[] FormatChars = new char[]{ '{', '}' };
     }
 
-    internal delegate void AvTraceEventHandler( AvTraceBuilder traceBuilder, ReadOnlySpan<object> parameters, int start );
+    internal delegate void AvTraceEventHandler(AvTraceBuilder traceBuilder, ReadOnlySpan<object> parameters, int start);
 
     internal class AvTraceBuilder
     {

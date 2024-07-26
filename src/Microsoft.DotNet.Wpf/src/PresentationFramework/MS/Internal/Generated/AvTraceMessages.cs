@@ -1338,13 +1338,13 @@ namespace MS.Internal
         }
 
         /// <summary> Send a single trace output </summary>
-        static public void Trace(TraceEventType type, AvTraceDetails traceDetails, params Span<object> parameters)
+        static public void Trace(TraceEventType type, AvTraceDetails traceDetails, params ReadOnlySpan<object> parameters)
         {
             _avTrace.Trace(type, traceDetails.Id, traceDetails.Message, traceDetails.Labels, parameters);
         }
 
         /// <summary> Send a singleton "activity" trace (really, this sends the same trace as both a Start and a Stop) </summary>
-        static public void TraceActivityItem(AvTraceDetails traceDetails, params Span<object> parameters)
+        static public void TraceActivityItem(AvTraceDetails traceDetails, params ReadOnlySpan<object> parameters)
         {
             _avTrace.TraceStartStop(traceDetails.Id, traceDetails.Message, traceDetails.Labels, parameters);
         }
@@ -1430,13 +1430,13 @@ namespace MS.Internal
         }
 
         /// <summary> Send a single trace output </summary>
-        static public void Trace(TraceEventType type, AvTraceDetails traceDetails, params Span<object> parameters)
+        static public void Trace(TraceEventType type, AvTraceDetails traceDetails, params ReadOnlySpan<object> parameters)
         {
             _avTrace.Trace(type, traceDetails.Id, traceDetails.Message, traceDetails.Labels, parameters);
         }
 
         /// <summary> Send a singleton "activity" trace (really, this sends the same trace as both a Start and a Stop) </summary>
-        static public void TraceActivityItem(AvTraceDetails traceDetails, params Span<object> parameters)
+        static public void TraceActivityItem(AvTraceDetails traceDetails, params ReadOnlySpan<object> parameters)
         {
             _avTrace.TraceStartStop(traceDetails.Id, traceDetails.Message, traceDetails.Labels, parameters);
         }
@@ -1634,13 +1634,13 @@ namespace MS.Internal
         }
 
         /// <summary> Send a single trace output </summary>
-        static public void Trace(TraceEventType type, AvTraceDetails traceDetails, params Span<object> parameters)
+        static public void Trace(TraceEventType type, AvTraceDetails traceDetails, params ReadOnlySpan<object> parameters)
         {
             _avTrace.Trace(type, traceDetails.Id, traceDetails.Message, traceDetails.Labels, parameters);
         }
 
         /// <summary> Send a singleton "activity" trace (really, this sends the same trace as both a Start and a Stop) </summary>
-        static public void TraceActivityItem(AvTraceDetails traceDetails, params Span<object> parameters)
+        static public void TraceActivityItem(AvTraceDetails traceDetails, params ReadOnlySpan<object> parameters)
         {
             _avTrace.TraceStartStop(traceDetails.Id, traceDetails.Message, traceDetails.Labels, parameters);
         }
@@ -1894,13 +1894,13 @@ namespace MS.Internal
         }
 
         /// <summary> Send a single trace output </summary>
-        static public void Trace(TraceEventType type, AvTraceDetails traceDetails, params Span<object> parameters)
+        static public void Trace(TraceEventType type, AvTraceDetails traceDetails, params ReadOnlySpan<object> parameters)
         {
             _avTrace.Trace(type, traceDetails.Id, traceDetails.Message, traceDetails.Labels, parameters);
         }
 
         /// <summary> Send a singleton "activity" trace (really, this sends the same trace as both a Start and a Stop) </summary>
-        static public void TraceActivityItem(AvTraceDetails traceDetails, params Span<object> parameters)
+        static public void TraceActivityItem(AvTraceDetails traceDetails, params ReadOnlySpan<object> parameters)
         {
             _avTrace.TraceStartStop(traceDetails.Id, traceDetails.Message, traceDetails.Labels, parameters);
         }
@@ -1944,13 +1944,13 @@ namespace MS.Internal
         }
 
         /// <summary> Send a single trace output </summary>
-        static public void Trace(TraceEventType type, AvTraceDetails traceDetails, params Span<object> parameters)
+        static public void Trace(TraceEventType type, AvTraceDetails traceDetails, params ReadOnlySpan<object> parameters)
         {
             _avTrace.Trace(type, traceDetails.Id, traceDetails.Message, traceDetails.Labels, parameters);
         }
 
         /// <summary> Send a singleton "activity" trace (really, this sends the same trace as both a Start and a Stop) </summary>
-        static public void TraceActivityItem(AvTraceDetails traceDetails, params Span<object> parameters )
+        static public void TraceActivityItem(AvTraceDetails traceDetails, params ReadOnlySpan<object> parameters)
         {
             _avTrace.TraceStartStop(traceDetails.Id, traceDetails.Message, traceDetails.Labels, parameters);
         }
@@ -2070,13 +2070,13 @@ namespace MS.Internal
         }
 
         /// <summary> Send a single trace output </summary>
-        static public void Trace(TraceEventType type, AvTraceDetails traceDetails, params Span<object> parameters)
+        static public void Trace(TraceEventType type, AvTraceDetails traceDetails, params ReadOnlySpan<object> parameters)
         {
             _avTrace.Trace(type, traceDetails.Id, traceDetails.Message, traceDetails.Labels, parameters);
         }
 
         /// <summary> Send a singleton "activity" trace (really, this sends the same trace as both a Start and a Stop) </summary>
-        static public void TraceActivityItem(AvTraceDetails traceDetails, params Span<object> parameters)
+        static public void TraceActivityItem(AvTraceDetails traceDetails, params ReadOnlySpan<object> parameters)
         {
             _avTrace.TraceStartStop(traceDetails.Id, traceDetails.Message, traceDetails.Labels, parameters);
         }

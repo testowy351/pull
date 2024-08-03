@@ -11,7 +11,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using MS.Internal;
 using MS.Internal.Interop;
-using System.Security;
+using System.Collections.Generic;
 
 // The SecurityHelper class differs between assemblies and could not actually be
 //  shared, so it is duplicated across namespaces to prevent name collision.
@@ -40,14 +40,14 @@ namespace MS.Win32
 
         internal static void TrackHwndSubclass(HwndSubclass subclass, IntPtr hwnd)
         {
-            lock (_hwndList)
+            lock (s_hwndList)
             {
                 // We use HwndSubclass as the key and the hwnd ptr as the value.
                 // This supports the case where two (or more) HwndSubclasses
                 // get attached to the same Hwnd.  At AppDomain shutdown, we may
                 // end up sending the Detach message to the Hwnd more than once,
                 // but that won't cause any harm.
-                _hwndList[subclass] = hwnd;
+                s_hwndList[subclass] = hwnd;
             }
 
 #if LOGGING
@@ -62,9 +62,9 @@ namespace MS.Win32
             if (_exiting)
                 return;
 
-            lock (_hwndList)
+            lock (s_hwndList)
             {
-                _hwndList.Remove(subclass);
+                s_hwndList.Remove(subclass);
             }
         }
 
@@ -79,14 +79,14 @@ namespace MS.Win32
 
             _exiting = true;
 
-            lock (_hwndList)
+            lock (s_hwndList)
             {
-                foreach (DictionaryEntry entry in _hwndList)
+                foreach (KeyValuePair<HwndSubclass, IntPtr> entry in s_hwndList)
                 {
-                    IntPtr hwnd = (IntPtr)entry.Value;
+                    IntPtr hwnd = entry.Value;
 
-                    int windowStyle = UnsafeNativeMethods.GetWindowLong(new HandleRef(null,hwnd), NativeMethods.GWL_STYLE);
-                    if((windowStyle & NativeMethods.WS_CHILD) != 0)
+                    int windowStyle = UnsafeNativeMethods.GetWindowLong(new HandleRef(null, hwnd), NativeMethods.GWL_STYLE);
+                    if ((windowStyle & NativeMethods.WS_CHILD) != 0)
                     {
                         // Tell all the HwndSubclass WndProcs for WS_CHILD windows
                         // to detach themselves. This is particularly important when
@@ -105,8 +105,8 @@ namespace MS.Win32
                         // of Hwnd subclasses.
 
                         UnsafeNativeMethods.SendMessage(hwnd, HwndSubclass.DetachMessage,
-                                                            IntPtr.Zero /* wildcard */,
-                                                            (IntPtr) 2 /* force and forward */);
+                                                        IntPtr.Zero /* wildcard */,
+                                                        2 /* force and forward */);
                     }
 
                     // the last WndProc on the chain might be managed as well
@@ -257,7 +257,7 @@ namespace MS.Win32
         private static IntPtr _cachedDefWindowProcA = IntPtr.Zero;
         private static IntPtr _cachedDefWindowProcW = IntPtr.Zero;
 
-        private static Hashtable _hwndList = new Hashtable(10);
+        private static readonly Dictionary<HwndSubclass, IntPtr> s_hwndList = new(10);
         private static bool _exiting = false;
     }
 }

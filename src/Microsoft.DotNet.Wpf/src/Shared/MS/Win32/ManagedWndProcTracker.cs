@@ -5,13 +5,11 @@
 //#define LOGGING
 
 using System;
-using System.Collections;
 using System.Threading;
-
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using MS.Internal;
 using MS.Internal.Interop;
-using System.Collections.Generic;
 
 namespace MS.Win32
 {
@@ -21,6 +19,7 @@ namespace MS.Win32
         {
             // Listen for ProcessExit so we can detach ourselves when the CLR shuts down
             // and avoid unmanaged code from calling back in to managed code during shutdown.
+            // Note: This subscribes to AppDomain events in base class, hence the ref is kept around
             ManagedWndProcTrackerShutDownListener listener = new ManagedWndProcTrackerShutDownListener();
         }
 

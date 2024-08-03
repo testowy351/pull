@@ -59,7 +59,7 @@ namespace MS.Win32
         {
             // if exiting the AppDomain, ignore this call.  This avoids changing
             // the list during the loop in OnAppDomainProcessExit
-            if (_exiting)
+            if (s_exiting)
                 return;
 
             lock (s_hwndList)
@@ -77,7 +77,7 @@ namespace MS.Win32
             // the DefaultWindowProc.
             //DbgUserBreakPoint();
 
-            _exiting = true;
+            s_exiting = true;
 
             lock (s_hwndList)
             {
@@ -124,7 +124,7 @@ namespace MS.Win32
             LogFinishHWND(hwnd, "Core HookUpDWP");
 #endif
 
-            IntPtr result = IntPtr.Zero ;
+            IntPtr result = IntPtr.Zero;
 
             // We've already cleaned up, return immediately.
             if (hwnd == IntPtr.Zero)
@@ -138,8 +138,8 @@ namespace MS.Win32
             {
                 try
                 {
-                    result = UnsafeNativeMethods.SetWindowLong(new HandleRef(null,hwnd), NativeMethods.GWL_WNDPROC, defWindowProc);
-}
+                    result = UnsafeNativeMethods.SetWindowLong(new HandleRef(null, hwnd), NativeMethods.GWL_WNDPROC, defWindowProc);
+                }
                 catch(System.ComponentModel.Win32Exception e)
                 {
                     // We failed to change the window proc.  Now what?
@@ -152,9 +152,9 @@ namespace MS.Win32
                         throw;
                     }
                 }
-                if (result != IntPtr.Zero )
+                if (result != IntPtr.Zero)
                 {
-                    UnsafeNativeMethods.PostMessage(new HandleRef(null,hwnd), WindowMessage.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                    UnsafeNativeMethods.PostMessage(new HandleRef(null, hwnd), WindowMessage.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
                 }
             }
         }
@@ -165,23 +165,23 @@ namespace MS.Win32
         {
             // We need to swap back in the DefWindowProc, but which one we use depends on
             // what the Unicode-ness of the window.
-            if (SafeNativeMethods.IsWindowUnicode(new HandleRef(null,hwnd)))
+            if (SafeNativeMethods.IsWindowUnicode(new HandleRef(null, hwnd)))
             {
-                if (_cachedDefWindowProcW == IntPtr.Zero)
+                if (s_cachedDefWindowProcW == IntPtr.Zero)
                 {
-                    _cachedDefWindowProcW = GetUser32ProcAddress("DefWindowProcW");
+                    s_cachedDefWindowProcW = GetUser32ProcAddress("DefWindowProcW");
                 }
 
-                return _cachedDefWindowProcW;
+                return s_cachedDefWindowProcW;
             }
             else
             {
-                if (_cachedDefWindowProcA == IntPtr.Zero)
+                if (s_cachedDefWindowProcA == IntPtr.Zero)
                 {
-                    _cachedDefWindowProcA = GetUser32ProcAddress("DefWindowProcA") ;
+                    s_cachedDefWindowProcA = GetUser32ProcAddress("DefWindowProcA");
                 }
 
-                return _cachedDefWindowProcA;
+                return s_cachedDefWindowProcA;
             }
         }
 
@@ -189,18 +189,15 @@ namespace MS.Win32
         {
             IntPtr hModule = UnsafeNativeMethods.GetModuleHandle(ExternDll.User32);
 
-
             if (hModule != IntPtr.Zero)
-            {
                 return UnsafeNativeMethods.GetProcAddress(new HandleRef(null, hModule), export);
-}
+
             return IntPtr.Zero;
         }
 
         private sealed class ManagedWndProcTrackerShutDownListener : ShutDownListener
         {
-            public ManagedWndProcTrackerShutDownListener()
-                : base(null, ShutDownEvents.AppDomain)
+            public ManagedWndProcTrackerShutDownListener() : base(null, ShutDownEvents.AppDomain)
             {
             }
 
@@ -254,10 +251,10 @@ namespace MS.Win32
 
 #endif
 
-        private static IntPtr _cachedDefWindowProcA = IntPtr.Zero;
-        private static IntPtr _cachedDefWindowProcW = IntPtr.Zero;
+        private static IntPtr s_cachedDefWindowProcA = IntPtr.Zero;
+        private static IntPtr s_cachedDefWindowProcW = IntPtr.Zero;
 
         private static readonly Dictionary<HwndSubclass, IntPtr> s_hwndList = new(10);
-        private static bool _exiting = false;
+        private static bool s_exiting = false;
     }
 }

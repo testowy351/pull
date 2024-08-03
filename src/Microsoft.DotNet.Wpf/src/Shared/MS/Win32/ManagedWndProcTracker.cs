@@ -13,20 +13,6 @@ using MS.Internal;
 using MS.Internal.Interop;
 using System.Collections.Generic;
 
-// The SecurityHelper class differs between assemblies and could not actually be
-//  shared, so it is duplicated across namespaces to prevent name collision.
-#if WINDOWS_BASE
-    using MS.Internal.WindowsBase;
-#elif PRESENTATION_CORE
-    using MS.Internal.PresentationCore;
-#elif PRESENTATIONFRAMEWORK
-    using MS.Internal.PresentationFramework;
-#elif DRT
-    using MS.Internal.Drt;
-#else
-#error Attempt to use a class (duplicated across multiple namespaces) from an unknown assembly.
-#endif
-
 namespace MS.Win32
 {
     internal static class ManagedWndProcTracker
@@ -114,7 +100,7 @@ namespace MS.Win32
                     // Just in case, restore the DefaultWindowProc.
                     HookUpDefWindowProc(hwnd);
                 }
-}
+            }
         }
 
         private static void HookUpDefWindowProc(IntPtr hwnd)
@@ -140,7 +126,7 @@ namespace MS.Win32
                 {
                     result = UnsafeNativeMethods.SetWindowLong(new HandleRef(null, hwnd), NativeMethods.GWL_WNDPROC, defWindowProc);
                 }
-                catch(System.ComponentModel.Win32Exception e)
+                catch (System.ComponentModel.Win32Exception e)
                 {
                     // We failed to change the window proc.  Now what?
 

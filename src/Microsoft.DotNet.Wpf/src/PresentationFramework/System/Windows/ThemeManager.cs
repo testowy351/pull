@@ -322,8 +322,6 @@ internal static class ThemeManager
         }
     }
 
-    internal static bool DeferredAppThemeLoading { get; set; } = false;
-
     internal static bool SkipAppThemeModeSyncing { get; set; } = false;
 
     internal static double DefaultFluentThemeFontSize => 14;

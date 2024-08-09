@@ -2553,12 +2553,6 @@ namespace System.Windows
 
             if (Standard.Utility.IsOSWindows10OrNewer)
             {
-                if(!ThemeManager.IsAppThemeModeSyncEnabled)
-                {
-                    ThemeManager.SyncThemeModeAndResources();
-                    ThemeManager.IsAppThemeModeSyncEnabled = true;
-                }
-
                 if(ThemeManager.IsFluentThemeEnabled)
                 {
                     ThemeManager.ApplyStyleOnWindow(this);
@@ -3627,6 +3621,15 @@ namespace System.Windows
             //  this makes MeasureCore / ArrangeCore to defer to direct MeasureOverride and ArrangeOverride calls
             //  without reading Width / Height properties and modifying input constraint size parameter...
             BypassLayoutPolicies = true;
+
+            if(ThemeManager.IsAppThemeModeSyncEnabled == false)
+            {
+                ThemeManager.IsAppThemeModeSyncEnabled = true;
+                if(IsInsideApp)
+                {
+                    ThemeManager.SyncThemeMode();
+                }
+            }
 
             // check if within an app && on the same thread
             if (IsInsideApp == true)

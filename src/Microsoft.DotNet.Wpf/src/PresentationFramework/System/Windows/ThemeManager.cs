@@ -138,46 +138,6 @@ internal static class ThemeManager
         return false;
     }
 
-    internal static void SyncThemeModeAndResources()
-    {
-        // Since, this is called from window there is a possiblity that the application
-        // instance is null. Hence, we need to check for null.
-        if(Application.Current == null) return;
-
-        ThemeMode themeMode = Application.Current.ThemeMode;
-
-        bool resyncThemeMode = false;
-        int index = FindLastFluentThemeResourceDictionaryIndex(Application.Current.Resources);
-
-        if(index > 0)
-        {
-            // This means that the devleoper has added the Fluent theme resources manually
-            themeMode = GetThemeModeFromResourceDictionary(Application.Current.Resources);            
-            resyncThemeMode = true;
-        }
-        else
-        {
-            // This means that the developer has set ThemeMode but Resources has not been set
-            // Hence we need to resync the properties but ThemeMode is the one that should be used here.
-            if(themeMode != ThemeMode.None && index != 0)
-            {
-                resyncThemeMode = true;
-            }
-
-            // If ThemeMode is None, and yet there is a Fluent theme dictionary, hence that was manually set.
-            if(themeMode == ThemeMode.None && index == 0)
-            {
-                resyncThemeMode = true;
-                themeMode = GetThemeModeFromResourceDictionary(Application.Current.Resources);            
-            }
-        }
-
-        if(resyncThemeMode)
-        {
-            Application.Current.ThemeMode = themeMode;
-        }
-    }
-
     internal static void ApplyStyleOnWindow(Window window)
     {
         if(!IsFluentThemeEnabled && window.ThemeMode == ThemeMode.None) return;
@@ -383,7 +343,14 @@ internal static class ThemeManager
         }
         else
         {
-            themeFileName = useLightMode ? "Fluent.Light.xaml" : "Fluent.Dark.xaml";
+            if(IsAppThemeModeSyncEnabled)
+            {
+                themeFileName = useLightMode ? "Fluent.Light.xaml" : "Fluent.Dark.xaml";
+            }
+            else
+            {
+                themeFileName = "Fluent.xaml";
+            }
         }
 
         return new Uri(fluentThemeResoruceDictionaryUri + themeFileName, UriKind.Absolute);

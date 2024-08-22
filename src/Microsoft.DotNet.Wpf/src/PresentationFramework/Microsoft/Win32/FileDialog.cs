@@ -613,7 +613,7 @@ namespace Microsoft.Win32
                             // of the filename in s.
 
                             string newFilename;
-                            if (extension.AsSpan().IndexOfAny('*', '?') != -1)
+                            if (extension.AsSpan().ContainsAny('*', '?'))
                             {
                                 // we don't want to append the extension if it contains wild cards
                                 newFilename = fileName.Substring(0, fileName.Length - currentExtension.Length);
@@ -760,7 +760,7 @@ namespace Microsoft.Win32
                         {
                             // start the slice one beyond the location of the '.'
                             // (i) and continue to the end of the string
-                            extensions.Add(exts[ext].Slice(i + 1, exts[ext].Length - (i + 1)).ToString());
+                            extensions.Add(exts[ext].Slice(i + 1).ToString());
                         }
                     }
                 }

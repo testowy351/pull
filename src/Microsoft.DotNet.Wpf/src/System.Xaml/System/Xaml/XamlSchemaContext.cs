@@ -761,7 +761,7 @@ namespace System.Xaml
             {
                 return false;
             }
-            // Not using Assembly.GetName() because it doesn't work in partial-trust
+
             AssemblyName toAssemblyName = new AssemblyName(toAssembly.FullName);
             foreach (AssemblyName friend in friends)
             {

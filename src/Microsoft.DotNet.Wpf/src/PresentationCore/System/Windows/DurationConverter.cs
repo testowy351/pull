@@ -92,49 +92,40 @@ namespace System.Windows
         /// <param name="destinationType">Type to convert to</param>
         /// <returns>converted value</returns>
         /// <ExternalAPI/>
-        public override object ConvertTo(
-            ITypeDescriptorContext context, 
-            CultureInfo cultureInfo, 
-            object value, 
-            Type destinationType)
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo cultureInfo, object value, Type destinationType)
         {
-            if (destinationType != null && value is Duration)
+            ArgumentNullException.ThrowIfNull(destinationType);
+
+            // Base calls do return string.Empty if value is null instead of throwing
+            if (value is null)
+                return string.Empty;
+
+            // Check that we actually support the conversion
+            if (value is not Duration duration || (destinationType != typeof(InstanceDescriptor) && destinationType != typeof(string)))
+                throw GetConvertToException(value, destinationType);
+
+            // For string we may currently use the type override
+            if (destinationType == typeof(string))
+                return duration.ToString();
+
+            // InstanceDescriptor reflection magic
+            if (duration.HasTimeSpan)
             {
-                Duration durationValue = (Duration)value;
-
-                if (destinationType == typeof(InstanceDescriptor))
-                {
-                    MemberInfo mi;
-
-                    if (durationValue.HasTimeSpan)
-                    {
-                        mi = typeof(Duration).GetConstructor(new Type[] { typeof(TimeSpan) });
-
-                        return new InstanceDescriptor(mi, new object[] { durationValue.TimeSpan });
-                    }
-                    else if (durationValue == Duration.Forever)
-                    {
-                        mi = typeof(Duration).GetProperty("Forever");
-
-                        return new InstanceDescriptor(mi, null);
-                    }
-                    else
-                    {
-                        Debug.Assert(durationValue == Duration.Automatic);  // Only other legal duration type
-
-                        mi = typeof(Duration).GetProperty("Automatic");
-
-                        return new InstanceDescriptor(mi, null);
-                    }
-                }
-                else if (destinationType == typeof(string))
-                {
-                    return durationValue.ToString();
-                }
+                MemberInfo mi = typeof(Duration).GetConstructor(new Type[] { typeof(TimeSpan) });
+                return new InstanceDescriptor(mi, new object[] { duration.TimeSpan });
             }
+            else if (duration == Duration.Forever)
+            {
+                MemberInfo mi = typeof(Duration).GetProperty("Forever");
+                return new InstanceDescriptor(mi, null);
+            }
+            else
+            {
+                Debug.Assert(duration == Duration.Automatic); // Only other legal duration type
 
-            // Pass unhandled cases to base class (which will throw exceptions for null value or destinationType.)
-            return base.ConvertTo(context, cultureInfo, value, destinationType);
+                MemberInfo mi = typeof(Duration).GetProperty("Automatic");
+                return new InstanceDescriptor(mi, null);
+            }
         }
     }
 }

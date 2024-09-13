@@ -32,11 +32,11 @@ namespace System.Windows.Media.Animation
     /// <para>A Forever RepeatBehavior specifies that a Timeline will repeat forever.</para>
     /// </summary>
     [TypeConverter(typeof(RepeatBehaviorConverter))]
-    public struct RepeatBehavior : IFormattable
+    public readonly struct RepeatBehavior : IFormattable
     {
-        private double _iterationCount;
-        private TimeSpan _repeatDuration;
-        private RepeatBehaviorType _type;
+        private readonly double _iterationCount;
+        private readonly TimeSpan _repeatDuration;
+        private readonly RepeatBehaviorType _type;
 
         #region Constructors
 
@@ -76,20 +76,14 @@ namespace System.Windows.Media.Animation
         }
 
         /// <summary>
-        /// Creates and returns a RepeatBehavior that indicates that a Timeline should repeat its
-        /// simple duration forever.
+        /// Private constructor, serves for creation of <see cref="RepeatBehavior.Forever"/> only.
         /// </summary>
-        /// <value>A RepeatBehavior that indicates that a Timeline should repeat its simple duration
-        /// forever.</value>
-        public static RepeatBehavior Forever
+        /// <param name="behaviorType">Only <see cref="RepeatBehaviorType.Forever"/> value is permitted.</param>
+        private RepeatBehavior(RepeatBehaviorType behaviorType)
         {
-            get
-            {
-                RepeatBehavior forever = new RepeatBehavior();
-                forever._type = RepeatBehaviorType.Forever;
+            Debug.Assert(behaviorType == RepeatBehaviorType.Forever);
 
-                return forever;
-            }
+            _type = behaviorType;
         }
 
         #endregion // Constructors
@@ -155,6 +149,20 @@ namespace System.Windows.Media.Animation
                 }
 
                 return _repeatDuration;
+            }
+        }
+
+        /// <summary>
+        /// Creates and returns a <see cref="RepeatBehavior"/> that indicates that a <see cref="Timeline"/>
+        /// should repeat its simple duration forever.
+        /// </summary>
+        /// <value>A <see cref="RepeatBehavior"/> that indicates that a <see cref="Timeline"/>
+        /// should repeat its simple duration forever.</value>
+        public static RepeatBehavior Forever
+        {
+            get
+            {
+                return new RepeatBehavior(RepeatBehaviorType.Forever);
             }
         }
 

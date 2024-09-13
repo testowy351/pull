@@ -9,16 +9,13 @@
 //
 //
 
-using System;
-using System.Collections;
+using System.ComponentModel.Design.Serialization;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 using System.Reflection;
-using System.Security;
 
-using SR=MS.Internal.PresentationCore.SR;
+using SR  =MS.Internal.PresentationCore.SR;
 
 namespace System.Windows
 {

@@ -4,16 +4,11 @@
 
 //
 
-// Allow suppression of certain presharp messages
-#pragma warning disable 1634, 1691
-
-using MS.Internal;
-
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 
-using SR=MS.Internal.PresentationCore.SR;
+using SR = MS.Internal.PresentationCore.SR;
 
 namespace System.Windows.Media.Animation
 {
@@ -117,11 +112,8 @@ namespace System.Windows.Media.Animation
         {
             get
             {
-                if (_type != RepeatBehaviorType.IterationCount)
-                {
-#pragma warning suppress 56503 // Suppress presharp warning: Follows a pattern similar to Nullable.
+                if (!HasCount)
                     throw new InvalidOperationException(SR.Format(SR.Timing_RepeatBehaviorNotIterationCount, this));
-                }
 
                 return _iterationCount;
             }
@@ -136,11 +128,8 @@ namespace System.Windows.Media.Animation
         {
             get
             {
-                if (_type != RepeatBehaviorType.RepeatDuration)
-                {
-#pragma warning suppress 56503 // Suppress presharp warning: Follows a pattern similar to Nullable.
+                if (!HasDuration)
                     throw new InvalidOperationException(SR.Format(SR.Timing_RepeatBehaviorNotRepeatDuration, this));
-                }
 
                 return _repeatDuration;
             }

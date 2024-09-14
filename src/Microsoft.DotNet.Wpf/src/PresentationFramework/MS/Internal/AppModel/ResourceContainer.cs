@@ -256,7 +256,7 @@ namespace MS.Internal.AppModel
             {
                 AssemblyName assemblyInfo = new AssemblyName(assembly.FullName);
 
-                string assemblyName = assemblyInfo.Name.ToLowerInvariant();
+                string assemblyName = assemblyInfo.Name;
                 string assemblyKey = string.Empty;
                 string key = assemblyName;
 
@@ -335,7 +335,7 @@ namespace MS.Internal.AppModel
             {
                 string key = assemblyName + assemblyVersion + assemblyKey;
 
-                s_registeredResourceManagers.TryGetValue(key.ToLowerInvariant(), out rmwResult);
+                s_registeredResourceManagers.TryGetValue(key, out rmwResult);
 
                 // first time. Add this to the hash table
                 if (rmwResult == null)
@@ -355,7 +355,7 @@ namespace MS.Internal.AppModel
                         rmwResult = new ResourceManagerWrapper(assembly);
                     }
 
-                    s_registeredResourceManagers[key.ToLowerInvariant()] = rmwResult;
+                    s_registeredResourceManagers[key] = rmwResult;
                 }
             }
 
@@ -391,7 +391,7 @@ namespace MS.Internal.AppModel
 
         #region Private Members
 
-        private static Dictionary<string, ResourceManagerWrapper> s_registeredResourceManagers = new();
+        private static Dictionary<string, ResourceManagerWrapper> s_registeredResourceManagers = new(StringComparer.OrdinalIgnoreCase);
         private static ResourceManagerWrapper _applicationResourceManagerWrapper = null;
         private static FileShare _fileShare = FileShare.Read;
         private static bool assemblyLoadhandlerAttached = false;

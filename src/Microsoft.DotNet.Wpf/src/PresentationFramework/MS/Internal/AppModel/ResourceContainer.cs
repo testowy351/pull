@@ -47,7 +47,7 @@ namespace MS.Internal.AppModel
             {
                 if (s_applicationResourceManagerWrapper == null)
                 {
-                    // load main excutable assembly
+                    // load main executable assembly
                     Assembly asmApplication = Application.ResourceAssembly;
 
                     if (asmApplication != null)

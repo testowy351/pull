@@ -71,8 +71,7 @@ namespace MS.Internal.FontCache
             bool isSingleSupportedFile = Util.IsSupportedFontExtension(Util.GetUriExtension(_uri), out bool isComposite);
             if (isSingleSupportedFile || !Util.IsEnumerableFontUriScheme(_uri))
             {
-                _fontSources = new List<Text.TextInterface.IFontSource>(1);                
-                _fontSources.Add(new FontSource(_uri, false, isComposite));
+                _fontSources = new List<IFontSource>(1) { new FontSource(_uri, false, isComposite) };
             }
             else
             {
@@ -186,10 +185,10 @@ namespace MS.Internal.FontCache
         
         #region IEnumerable<FontSource> Members
 
-        IEnumerator<Text.TextInterface.IFontSource> System.Collections.Generic.IEnumerable<Text.TextInterface.IFontSource>.GetEnumerator()
+        IEnumerator<IFontSource> IEnumerable<IFontSource>.GetEnumerator()
         {
             SetFontSources();
-            return (IEnumerator<Text.TextInterface.IFontSource>)_fontSources.GetEnumerator();
+            return _fontSources.GetEnumerator();
         }
 
         #endregion
@@ -205,16 +204,16 @@ namespace MS.Internal.FontCache
         #endregion
     
 
-        private Uri                         _uri;
+        private Uri                          _uri;
 
-        private bool                        _isWindowsFonts;
+        private bool                         _isWindowsFonts;
 
         // _isFileSystemFolder flag makes sense only when _uri.IsFile is set to true.
-        private bool                                           _isFileSystemFolder;
-        private volatile IList<Text.TextInterface.IFontSource> _fontSources;
+        private bool                         _isFileSystemFolder;
+        private volatile IList<IFontSource>  _fontSources;
 
         // Flag to indicate that only composite fonts in the provided URI location should be retrieved.        
-        private bool                               _tryGetCompositeFontsOnly;
+        private bool                         _tryGetCompositeFontsOnly;
 
         private const string InstalledWindowsFontsRegistryKey = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts";
         private const string InstalledWindowsFontsRegistryKeyFullPath = @"HKEY_LOCAL_MACHINE\" + InstalledWindowsFontsRegistryKey;

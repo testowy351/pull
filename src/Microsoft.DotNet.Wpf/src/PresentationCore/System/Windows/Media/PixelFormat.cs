@@ -257,7 +257,7 @@ namespace System.Windows.Media
             _guidFormat = PixelFormat.GetGuidFromFormat(_format);
         }
 
-        static private Guid GetGuidFromFormat(PixelFormatEnum format) => format switch
+        private static Guid GetGuidFromFormat(PixelFormatEnum format) => format switch
         {
             PixelFormatEnum.Default => WICPixelFormatGUIDs.WICPixelFormatDontCare,
             PixelFormatEnum.Indexed1 => WICPixelFormatGUIDs.WICPixelFormat1bppIndexed,
@@ -288,7 +288,7 @@ namespace System.Windows.Media
             _ => throw new ArgumentException(SR.Format(SR.Image_BadPixelFormat, format), nameof(format))
         };
 
-        private PixelFormatFlags FormatFlags
+        private readonly PixelFormatFlags FormatFlags
         {
             get
             {
@@ -301,7 +301,7 @@ namespace System.Windows.Media
         /// </summary>
         public static bool operator == (PixelFormat left, PixelFormat right)
         {
-            return (left.Guid == right.Guid);
+            return left.Guid == right.Guid;
         }
 
         /// <summary>
@@ -309,7 +309,7 @@ namespace System.Windows.Media
         /// </summary>
         public static bool operator != (PixelFormat left, PixelFormat right)
         {
-            return (left.Guid != right.Guid);
+            return left.Guid != right.Guid;
         }
 
         /// <summary>
@@ -317,13 +317,13 @@ namespace System.Windows.Media
         /// </summary>
         public static bool Equals(PixelFormat left, PixelFormat right)
         {
-            return (left.Guid == right.Guid);
+            return left.Guid == right.Guid;
         }
 
         /// <summary>
         /// Equals - Returns whether or not this is equal to the PixelFormat
         /// </summary>
-        public bool Equals(PixelFormat pixelFormat)
+        public readonly bool Equals(PixelFormat pixelFormat)
         {
             return this == pixelFormat;
         }
@@ -331,15 +331,9 @@ namespace System.Windows.Media
         /// <summary>
         /// Equals - Returns whether or not this is equal to the Object
         /// </summary>
-        public override bool Equals(Object obj)
+        public override readonly bool Equals(object obj)
         {
-            if ((null == obj) ||
-                !(obj is PixelFormat))
-            {
-                return false;
-            }
-
-            return this == (PixelFormat)obj;
+            return obj is PixelFormat pixelFormat && Equals(pixelFormat);
         }
 
         /// <summary>
@@ -494,25 +488,25 @@ namespace System.Windows.Media
             }
         }
 
-        internal bool HasAlpha
+        internal readonly bool HasAlpha
         {
             get
             {
-                return ((FormatFlags & PixelFormatFlags.ChannelOrderABGR) != 0 ||
-                            (FormatFlags & PixelFormatFlags.ChannelOrderARGB) != 0 ||
-                            (FormatFlags & PixelFormatFlags.NChannelAlpha) != 0);
+                return (FormatFlags & PixelFormatFlags.ChannelOrderABGR) != 0 ||
+                       (FormatFlags & PixelFormatFlags.ChannelOrderARGB) != 0 ||
+                       (FormatFlags & PixelFormatFlags.NChannelAlpha) != 0;
             }
         }
 
-        internal bool Palettized
+        internal readonly bool Palettized
         {
             get
             {
-                return ((FormatFlags & PixelFormatFlags.Palettized) != 0);
+                return (FormatFlags & PixelFormatFlags.Palettized) != 0;
             }
         }
 
-        internal PixelFormatEnum Format
+        internal readonly PixelFormatEnum Format
         {
             get
             {
@@ -532,14 +526,12 @@ namespace System.Windows.Media
         /// Convert a PixelFormat to a string that represents it.
         /// </summary>
         /// <returns></returns>
-        public override string ToString ()
+        public override readonly string ToString()
         {
             return _format.ToString();
         }
 
-        internal static PixelFormat GetPixelFormat (
-            SafeMILHandle /* IWICBitmapSource */ bitmapSource
-            )
+        internal static PixelFormat GetPixelFormat(SafeMILHandle /* IWICBitmapSource */ bitmapSource)
         {
             Guid guidPixelFormat = WICPixelFormatGUIDs.WICPixelFormatDontCare;
 
@@ -596,7 +588,7 @@ namespace System.Windows.Media
             _ => PixelFormats.Default,
         };
 
-        static private PixelFormatFlags GetPixelFormatFlagsFromGuid(Guid pixelFormatGuid)
+        private static PixelFormatFlags GetPixelFormatFlagsFromGuid(Guid pixelFormatGuid)
         {
             PixelFormatFlags result = PixelFormatFlags.BitsPerPixelUndefined;
 
@@ -688,7 +680,7 @@ namespace System.Windows.Media
             return result;
         }
 
-        static private PixelFormatFlags GetPixelFormatFlagsFromEnum(PixelFormatEnum pixelFormatEnum) => pixelFormatEnum switch
+        private static PixelFormatFlags GetPixelFormatFlagsFromEnum(PixelFormatEnum pixelFormatEnum) => pixelFormatEnum switch
         {
             PixelFormatEnum.Default => PixelFormatFlags.BitsPerPixelUndefined,
             PixelFormatEnum.Indexed1 => PixelFormatFlags.BitsPerPixel1 | PixelFormatFlags.Palettized,
@@ -720,7 +712,7 @@ namespace System.Windows.Media
             _ => PixelFormatFlags.BitsPerPixelUndefined,
         };
 
-        static private UInt32 GetBitsPerPixelFromEnum(PixelFormatEnum pixelFormatEnum) => pixelFormatEnum switch
+        private static UInt32 GetBitsPerPixelFromEnum(PixelFormatEnum pixelFormatEnum) => pixelFormatEnum switch
         {
             PixelFormatEnum.Default => 0,
             PixelFormatEnum.Indexed1 => 1,
@@ -746,10 +738,10 @@ namespace System.Windows.Media
         };
 
         [NonSerialized]
-        private PixelFormatFlags _flags;
+        private readonly PixelFormatFlags _flags;
 
         [NonSerialized]
-        private PixelFormatEnum _format;
+        private readonly PixelFormatEnum _format;
 
         [NonSerialized]
         private UInt32 _bitsPerPixel;

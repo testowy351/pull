@@ -6,23 +6,14 @@
 //
 #pragma warning disable 1634, 1691 // Allow suppression of certain presharp messages
 
-using System;
-using System.Security;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Design.Serialization;
-using System.Reflection;
 using MS.Internal;
-using MS.Win32;
 using System.Diagnostics;
-using System.Windows.Media;
-using System.Globalization;
-using System.Runtime.InteropServices;
-
-using SR=MS.Internal.PresentationCore.SR;
-using UnsafeNativeMethods=MS.Win32.PresentationCore.UnsafeNativeMethods;
+using System.ComponentModel;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+
+using SR = MS.Internal.PresentationCore.SR;
+using UnsafeNativeMethods = MS.Win32.PresentationCore.UnsafeNativeMethods;
 
 namespace System.Windows.Media
 {
@@ -163,31 +154,19 @@ namespace System.Windows.Media
         {
             unsafe
             {
-                Guid guidWicPixelFormat = WICPixelFormatGUIDs.WICPixelFormatDontCare;
-                byte * pGuidPixelFormat = (byte*) &guidPixelFormat;
-                byte * pGuidBuiltIn = (byte*) &guidWicPixelFormat;
+                Debug.Assert(Unsafe.SizeOf<Guid>() == 16);
 
-                // Compare only the first 15 bytes of the GUID.  If the first
+                // Compare only the first 15 bytes of the GUID. If the first
                 // 15 bytes match the WIC pixel formats, then the 16th byte
                 // will be the format enum value.
-                Debug.Assert(Unsafe.SizeOf<Guid>() == 16);
-                int compareCount = 15;
+                Guid guidWicPixelFormat = WICPixelFormatGUIDs.WICPixelFormatDontCare;
+                ReadOnlySpan<byte> pGuidPixelFormat = new(&guidPixelFormat, 15);
+                ReadOnlySpan<byte> pGuidBuiltIn = new(&guidWicPixelFormat, 15);         
                 
-                bool fBuiltIn = true;
-                for (int i = 0; i < compareCount; ++i)
+                // If it looks like a built-in WIC pixel format, verify that the format enum value is known to us.
+                if (pGuidPixelFormat.SequenceEqual(pGuidBuiltIn) && ((byte*)&guidPixelFormat)[15] <= (byte)PixelFormatEnum.Cmyk32)
                 {
-                    if (pGuidPixelFormat[i] != pGuidBuiltIn[i])
-                    {
-                        fBuiltIn = false;
-                        break;
-                    }
-                }
-                
-                // If it looks like a built-in WIC pixel format, verify that
-                // the format enum value is known to us.
-                if (fBuiltIn && pGuidPixelFormat[compareCount] <= (byte)PixelFormatEnum.Cmyk32)
-                {
-                    _format = (PixelFormatEnum) pGuidPixelFormat[compareCount];
+                    _format = (PixelFormatEnum)((byte*)&guidPixelFormat)[15];
                 }
                 else
                 {
@@ -514,7 +493,7 @@ namespace System.Windows.Media
             }
         }
 
-        internal Guid Guid
+        internal readonly Guid Guid
         {
             get
             {
@@ -747,7 +726,7 @@ namespace System.Windows.Media
         private UInt32 _bitsPerPixel;
 
         [NonSerialized]
-        private Guid _guidFormat;
+        private readonly Guid _guidFormat;
 
         [NonSerialized]
         private static readonly Guid WICPixelFormatPhotonFirst = new Guid(0x6fddc324, 0x4e03, 0x4bfe, 0xb1, 0x85, 0x3d, 0x77, 0x76, 0x8d, 0xc9, 0x1d);

@@ -344,15 +344,13 @@ namespace System.Windows.Media
                 IntPtr pixelFormatInfo = CreatePixelFormatInfo();
                 Debug.Assert(pixelFormatInfo != IntPtr.Zero);
 
-                UInt32 channelCount = 0;
-                PixelFormatChannelMask[] masks = null;
-                UInt32 cbBytes = 0;
+                PixelFormatChannelMask[] masks;
 
                 try
                 {
                     HRESULT.Check(UnsafeNativeMethods.WICPixelFormatInfo.GetChannelCount(
                         pixelFormatInfo,
-                        out channelCount
+                        out UInt32 channelCount
                         ));
 
                     Debug.Assert(channelCount >= 1);
@@ -364,7 +362,7 @@ namespace System.Windows.Media
                         for (uint i = 0; i < channelCount; i++)
                         {
                             HRESULT.Check(UnsafeNativeMethods.WICPixelFormatInfo.GetChannelMask(
-                                pixelFormatInfo, i, 0, null, out cbBytes));
+                                pixelFormatInfo, i, 0, null, out UInt32 cbBytes));
 
                             Debug.Assert(cbBytes > 0);
 
@@ -390,7 +388,7 @@ namespace System.Windows.Media
                     }
                 }
 
-                return new PartialList<PixelFormatChannelMask>(masks);
+                return masks;
             }
         }
 

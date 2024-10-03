@@ -166,7 +166,7 @@ namespace System.Windows
         /// Special representation applies for <see cref="double.NaN"/> values, emitted as "Auto" string instead. </summary>
         /// <param name="value">The value to format as string.</param>
         /// <param name="handler">The handler specifying culture used for conversion.</param>
-        static internal void FormatLengthAsString(double value, ref DefaultInterpolatedStringHandler handler)
+        internal static void FormatLengthAsString(double value, ref DefaultInterpolatedStringHandler handler)
         {
             if (double.IsNaN(value))
                 handler.AppendLiteral("Auto");
@@ -182,7 +182,7 @@ namespace System.Windows
         // NOTE - This code is called from FontSizeConverter, so changes will affect both.
         internal static double FromString(ReadOnlySpan<char> value, CultureInfo cultureInfo)
         {
-            ReadOnlySpan<char> valueSpan = s.AsSpan().Trim();
+            ReadOnlySpan<char> valueSpan = value.Trim();
             double unitFactor = 1.0;
 
             // Auto is represented as Double.NaN
@@ -220,7 +220,6 @@ namespace System.Windows
                 throw new FormatException(SR.Format(SR.LengthFormatError, span.ToString()));
             }
         }
-
 
         #endregion
 

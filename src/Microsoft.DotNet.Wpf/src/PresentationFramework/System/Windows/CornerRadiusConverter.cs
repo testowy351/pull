@@ -2,25 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-//
-// 
-//
-// Description: Contains the CornerRadiusConverter: TypeConverter for the CornerRadiusclass.
-//
-//
-
-using System;
-using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
+using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
-using System.Text;
-using System.Windows;
-using System.Security;
 using MS.Internal;
-using MS.Utility;
-
-#pragma warning disable 1634, 1691  // suppressing PreSharp warnings
 
 namespace System.Windows
 {
@@ -104,9 +90,6 @@ namespace System.Windows
             return new CornerRadius(Convert.ToDouble(source, cultureInfo));
         }
 
-//Workaround for PreSharp bug - it complains about value being possibly null even though there is a check above
-#pragma warning disable 56506
-
         /// <summary>
         /// ConvertTo - Attempt to convert a CornerRadius to the given type
         /// </summary>
@@ -144,9 +127,6 @@ namespace System.Windows
             throw new ArgumentException(SR.Format(SR.CannotConvertType, typeof(CornerRadius), destinationType.FullName));
         }
 
-//Workaround for PreSharp bug - it complains about value being possibly null even though there is a check above
-#pragma warning restore 56506
-
         #endregion Public Methods
 
         //-------------------------------------------------------------------
@@ -166,7 +146,7 @@ namespace System.Windows
 
         internal static CornerRadius FromString(string s, CultureInfo cultureInfo)
         {
-            TokenizerHelper th = new (s, cultureInfo);
+            TokenizerHelper th = new(s, cultureInfo);
             Span<double> radii = stackalloc double[4];
             int i = 0;
 

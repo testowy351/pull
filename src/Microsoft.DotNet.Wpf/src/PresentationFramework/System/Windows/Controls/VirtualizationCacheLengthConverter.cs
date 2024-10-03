@@ -2,22 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-//
-// Description: Virtualization cache length converter implementation
-//
-
-using MS.Internal;
-using MS.Utility;
-using System.ComponentModel;
-using System.Windows;
-using System;
-using System.Security;
 using System.ComponentModel.Design.Serialization;
-using System.Diagnostics;
+using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
-using System.Windows.Markup;
-using System.Text;
+using MS.Internal;
 
 namespace System.Windows.Controls
 {
@@ -94,7 +83,7 @@ namespace System.Windows.Controls
         {
             if (source is null)
                 throw GetConvertFromException(source);
-            
+
             if (source is string stringValue)
                 return FromString(stringValue, cultureInfo);
 
@@ -160,8 +149,7 @@ namespace System.Windows.Controls
         {
             char listSeparator = TokenizerHelper.GetNumericListSeparator(cultureInfo);
 
-            return string.Create(cultureInfo, stackalloc char[128],
-                $"{cacheLength.CacheBeforeViewport}{listSeparator}{cacheLength.CacheAfterViewport}");
+            return string.Create(cultureInfo, stackalloc char[128], $"{cacheLength.CacheBeforeViewport}{listSeparator}{cacheLength.CacheAfterViewport}");
         }
         /// <summary>
         /// Parses a VirtualizationCacheLength from a string given the CultureInfo.
@@ -171,7 +159,7 @@ namespace System.Windows.Controls
         /// <returns>Newly created VirtualizationCacheLength instance.</returns>
         internal static VirtualizationCacheLength FromString(string s, CultureInfo cultureInfo)
         {
-            TokenizerHelper th = new (s, cultureInfo);
+            TokenizerHelper th = new(s, cultureInfo);
             Span<double> lengths = stackalloc double[2];
             int i = 0;
 
@@ -193,7 +181,7 @@ namespace System.Windows.Controls
             };
         }
 
-    #endregion
+        #endregion
     }
 }
 

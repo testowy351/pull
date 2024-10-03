@@ -94,12 +94,14 @@ namespace System.Windows
         /// <param name="source"> The object to convert to a CornerRadius. </param>
         public override object ConvertFrom(ITypeDescriptorContext typeDescriptorContext, CultureInfo cultureInfo, object source)
         {
-            if (source != null)
-            {
-                if (source is string) { return FromString((string)source, cultureInfo); }
-                else                  { return new CornerRadius(Convert.ToDouble(source, cultureInfo)); }
-            }
-            throw GetConvertFromException(source);
+            if (source is null)
+                throw GetConvertFromException(source);
+
+            if (source is string stringValue)
+                return FromString(stringValue, cultureInfo);
+
+            // Conversion from a numeric type
+            return new CornerRadius(Convert.ToDouble(source, cultureInfo));
         }
 
 //Workaround for PreSharp bug - it complains about value being possibly null even though there is a check above

@@ -731,7 +731,7 @@ namespace System.Windows.Media
 
             while (th.NextToken())
             {
-                value = Convert.ToDouble(th.GetCurrentToken(), formatProvider);
+                value = double.Parse(th.GetCurrentTokenAsSpan(), formatProvider);
 
                 resource.Add(value);
             }

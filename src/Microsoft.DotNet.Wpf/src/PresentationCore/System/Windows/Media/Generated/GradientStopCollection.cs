@@ -813,7 +813,7 @@ namespace System.Windows.Media
             {
                 value = new GradientStop(
                     Parsers.ParseColor(th.GetCurrentToken(), formatProvider),
-                    Convert.ToDouble(th.NextTokenRequired(), formatProvider));
+                    double.Parse(th.NextTokenRequiredAsSpan(), formatProvider));
 
                 resource.Add(value);
             }

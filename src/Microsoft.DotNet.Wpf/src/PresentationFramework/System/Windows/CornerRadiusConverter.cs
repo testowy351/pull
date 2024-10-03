@@ -173,37 +173,30 @@ namespace System.Windows
             return string.Create(cultureInfo, stackalloc char[64], $"{cr.TopLeft}{listSeparator}{cr.TopRight}{listSeparator}{cr.BottomRight}{listSeparator}{cr.BottomLeft}");
         }
 
-        static internal CornerRadius FromString(string s, CultureInfo cultureInfo)
+        internal static CornerRadius FromString(string s, CultureInfo cultureInfo)
         {
-            TokenizerHelper th = new TokenizerHelper(s, cultureInfo);
-            double[] radii = new double[4];
+            TokenizerHelper th = new (s, cultureInfo);
+            Span<double> radii = stackalloc double[4];
             int i = 0;
 
             // Peel off each Length in the delimited list.
             while (th.NextToken())
             {
                 if (i >= 4)
-                {
-                    i = 5;    // Set i to a bad value. 
-                    break;
-                }
+                    throw new FormatException(SR.Format(SR.InvalidStringCornerRadius, s));
 
-                radii[i] = double.Parse(th.GetCurrentToken(), cultureInfo);
+                radii[i] = double.Parse(th.GetCurrentTokenAsSpan(), cultureInfo);
                 i++;
             }
 
             // We have a reasonable interpreation for one value (all four edges)
             // and four values (left, top, right, bottom).
-            switch (i)
+            return i switch
             {
-                case 1:
-                    return (new CornerRadius(radii[0]));
-
-                case 4:
-                    return (new CornerRadius(radii[0], radii[1], radii[2], radii[3]));
-            }
-
-            throw new FormatException(SR.Format(SR.InvalidStringCornerRadius, s));
+                1 => new CornerRadius(radii[0]),
+                4 => new CornerRadius(radii[0], radii[1], radii[2], radii[3]),
+                _ => throw new FormatException(SR.Format(SR.InvalidStringCornerRadius, s)),
+            };
         }
         #endregion
     }

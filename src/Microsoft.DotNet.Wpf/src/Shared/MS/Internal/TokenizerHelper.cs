@@ -41,18 +41,17 @@ namespace MS.Internal
     internal sealed class TokenizerHelper
     {
         /// <summary>
-        /// Constructor for TokenizerHelper which accepts an IFormatProvider.
-        /// If the IFormatProvider is null, we use the thread's IFormatProvider info.
-        /// We will use ',' as the list separator, unless it's the same as the
-        /// decimal separator.  If it *is*, then we can't determine if, say, "23,5" is one
-        /// number or two.  In this case, we will use ";" as the separator.
+        /// Constructor for <see cref="TokenizerHelper"/> which accepts an <see cref="IFormatProvider"/>.
+        /// If the <see cref="IFormatProvider"/> is <see langword="null"/>, we use the thread's <see cref="IFormatProvider"/> info.
+        /// We will use ',' as the list separator, unless it's the same as the decimal separator.
+        /// If it *is*, then we can't determine if, say, "23,5" is one number or two. In this case, we will use ";" as the separator.
         /// </summary>
         /// <param name="str"> The string which will be tokenized. </param>
-        /// <param name="formatProvider"> The IFormatProvider which controls this tokenization. </param>
+        /// <param name="formatProvider"> The <see cref="IFormatProvider"/> which controls this tokenization. </param>
         internal TokenizerHelper(string str, IFormatProvider formatProvider) : this(str, '\'', GetNumericListSeparator(formatProvider)) { }
 
         /// <summary>
-        /// Initialize the TokenizerHelper with the string to tokenize,
+        /// Initialize the <see cref="TokenizerHelper"/> with the string to tokenize,
         /// the char which represents quotes and the list separator.
         /// </summary>
         /// <param name="str"> The string to tokenize. </param>
@@ -72,9 +71,7 @@ namespace MS.Internal
             while (_charIndex < _strLen)
             {
                 if (!char.IsWhiteSpace(_str[_charIndex]))
-                {
                     break;
-                }
 
                 ++_charIndex;
             }
@@ -114,7 +111,7 @@ namespace MS.Internal
         {
             if (_charIndex != _strLen)
             {
-                throw new System.InvalidOperationException(SR.Format(SR.TokenizerHelperExtraDataEncountered, _charIndex, _str));
+                throw new InvalidOperationException(SR.Format(SR.TokenizerHelperExtraDataEncountered, _charIndex, _str));
             }
         }
 
@@ -135,7 +132,7 @@ namespace MS.Internal
         {
             if (!NextToken(false))
             {
-                throw new System.InvalidOperationException(SR.Format(SR.TokenizerHelperPrematureStringTermination, _str));
+                throw new InvalidOperationException(SR.Format(SR.TokenizerHelperPrematureStringTermination, _str));
             }
 
             return GetCurrentToken();
@@ -163,7 +160,7 @@ namespace MS.Internal
         {
             if (!NextToken(allowQuotedToken))
             {
-                throw new System.InvalidOperationException(SR.Format(SR.TokenizerHelperPrematureStringTermination, _str));
+                throw new InvalidOperationException(SR.Format(SR.TokenizerHelperPrematureStringTermination, _str));
             }
 
             return GetCurrentToken();
@@ -204,8 +201,7 @@ namespace MS.Internal
 
             // If we are allowing a quoted token and this token begins with a quote,
             // set up the quote count and skip the initial quote
-            if (allowQuotedToken &&
-                currentChar == _quoteChar)
+            if (allowQuotedToken && _quoteChar == currentChar)
             {
                 quoteCount++; // increment quote count
                 ++_charIndex; // move to next character
@@ -255,7 +251,7 @@ namespace MS.Internal
             // before the ending quote
             if (quoteCount > 0)
             {
-                throw new System.InvalidOperationException(SR.Format(SR.TokenizerHelperMissingEndQuote, _str));                
+                throw new InvalidOperationException(SR.Format(SR.TokenizerHelperMissingEndQuote, _str));                
             }
 
             ScanToNextToken(separator); // move so at the start of the nextToken for next call
@@ -266,14 +262,18 @@ namespace MS.Internal
 
             if (_currentTokenLength < 1)
             {
-                throw new System.InvalidOperationException(SR.Format(SR.TokenizerHelperEmptyToken, _charIndex, _str));
+                throw new InvalidOperationException(SR.Format(SR.TokenizerHelperEmptyToken, _charIndex, _str));
             }
 
             return true;
         }
 
-        // helper to move the _charIndex to the next token or to the end of the string
-        void ScanToNextToken(char separator)
+        /// <summary>
+        /// Helper function to move the _charIndex to the next token or to the end of the string.
+        /// </summary>
+        /// <param name="separator"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        private void ScanToNextToken(char separator)
         {
             // if already at end of the string don't bother
             if (_charIndex < _strLen)
@@ -285,7 +285,7 @@ namespace MS.Internal
                 // that the char after the quotes string isn't a char.
                 if (!(char.IsWhiteSpace(currentChar) || (currentChar == separator)))
                 {
-                    throw new System.InvalidOperationException(SR.Format(SR.TokenizerHelperExtraDataEncountered, _charIndex, _str));                    
+                    throw new InvalidOperationException(SR.Format(SR.TokenizerHelperExtraDataEncountered, _charIndex, _str));                    
                 }
 
                 // loop until hit a character that isn't
@@ -303,7 +303,7 @@ namespace MS.Internal
 
                         if (argSepCount > 1)
                         {
-                            throw new System.InvalidOperationException(SR.Format(SR.TokenizerHelperEmptyToken, _charIndex, _str));
+                            throw new InvalidOperationException(SR.Format(SR.TokenizerHelperEmptyToken, _charIndex, _str));
                         }
                     }
                     else if (char.IsWhiteSpace(currentChar))
@@ -322,14 +322,14 @@ namespace MS.Internal
 
                 if (argSepCount > 0 && _charIndex >= _strLen)
                 {
-                    throw new System.InvalidOperationException(SR.Format(SR.TokenizerHelperEmptyToken, _charIndex, _str));
+                    throw new InvalidOperationException(SR.Format(SR.TokenizerHelperEmptyToken, _charIndex, _str));
                 }
             }
         }
 
         // Helper to get the numeric list separator for a given IFormatProvider.
         // Separator is a comma [,] if the decimal separator is not a comma, or a semicolon [;] otherwise.
-        static internal char GetNumericListSeparator(IFormatProvider provider)
+        internal static char GetNumericListSeparator(IFormatProvider provider)
         {
             char numericSeparator = ',';
 
@@ -338,7 +338,7 @@ namespace MS.Internal
             // this method returns the current culture's NumberFormatInfo.
             NumberFormatInfo numberFormat = NumberFormatInfo.GetInstance(provider);
 
-            Debug.Assert(null != numberFormat);
+            Debug.Assert(numberFormat != null);
 
             // Is the decimal separator is the same as the list separator?
             // If so, we use the ";".
@@ -367,6 +367,7 @@ namespace MS.Internal
         // State fields
         private int _charIndex;
         private bool _foundSeparator;
+
         internal int _currentTokenIndex;
         internal int _currentTokenLength;
     }

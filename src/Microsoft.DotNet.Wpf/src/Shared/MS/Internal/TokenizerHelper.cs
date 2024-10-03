@@ -49,12 +49,7 @@ namespace MS.Internal
         /// </summary>
         /// <param name="str"> The string which will be tokenized. </param>
         /// <param name="formatProvider"> The IFormatProvider which controls this tokenization. </param>
-        internal TokenizerHelper(string str, IFormatProvider formatProvider)
-        {
-            char numberSeparator = GetNumericListSeparator(formatProvider);
-
-            Initialize(str, '\'', numberSeparator);
-        }
+        internal TokenizerHelper(string str, IFormatProvider formatProvider) : this(str, '\'', GetNumericListSeparator(formatProvider)) { }
 
         /// <summary>
         /// Initialize the TokenizerHelper with the string to tokenize,
@@ -63,23 +58,7 @@ namespace MS.Internal
         /// <param name="str"> The string to tokenize. </param>
         /// <param name="quoteChar"> The quote char. </param>
         /// <param name="separator"> The list separator. </param>
-        internal TokenizerHelper(string str,
-                                 char quoteChar,
-                                 char separator)
-        {
-            Initialize(str, quoteChar, separator);
-        }
-
-        /// <summary>
-        /// Initialize the TokenizerHelper with the string to tokenize,
-        /// the char which represents quotes and the list separator.
-        /// </summary>
-        /// <param name="str"> The string to tokenize. </param>
-        /// <param name="quoteChar"> The quote char. </param>
-        /// <param name="separator"> The list separator. </param>
-        private void Initialize(string str,
-                                char quoteChar,
-                                char separator)
+        internal TokenizerHelper(string str, char quoteChar, char separator)
         {
             _str = str;
             _strLen = str == null ? 0 : str.Length;
@@ -92,7 +71,7 @@ namespace MS.Internal
             // character of the next token.
             while (_charIndex < _strLen)
             {
-                if (!Char.IsWhiteSpace(_str, _charIndex))
+                if (!char.IsWhiteSpace(_str[_charIndex]))
                 {
                     break;
                 }
@@ -218,7 +197,7 @@ namespace MS.Internal
 
             char currentChar = _str[_charIndex];
 
-            Debug.Assert(!Char.IsWhiteSpace(currentChar),"Token started on Whitespace");
+            Debug.Assert(!char.IsWhiteSpace(currentChar), "Token started on Whitespace");
 
             // setup the quoteCount
             int quoteCount = 0;
@@ -259,7 +238,7 @@ namespace MS.Internal
                         }
                     }
                 }
-                else if ((Char.IsWhiteSpace(currentChar)) || (currentChar == separator))
+                else if (char.IsWhiteSpace(currentChar) || (currentChar == separator))
                 {
                     if (currentChar == separator)
                     {
@@ -304,8 +283,7 @@ namespace MS.Internal
                 // check that the currentChar is a space or the separator.  If not
                 // we have an error. this can happen in the quote case
                 // that the char after the quotes string isn't a char.
-                if (!(currentChar == separator) &&
-                    !Char.IsWhiteSpace(currentChar))
+                if (!(char.IsWhiteSpace(currentChar) || (currentChar == separator)))
                 {
                     throw new System.InvalidOperationException(SR.Format(SR.TokenizerHelperExtraDataEncountered, _charIndex, _str));                    
                 }
@@ -328,7 +306,7 @@ namespace MS.Internal
                             throw new System.InvalidOperationException(SR.Format(SR.TokenizerHelperEmptyToken, _charIndex, _str));
                         }
                     }
-                    else if (Char.IsWhiteSpace(currentChar))
+                    else if (char.IsWhiteSpace(currentChar))
                     {
                         ++_charIndex;
                     }
@@ -380,13 +358,16 @@ namespace MS.Internal
             }
         }
 
-        char _quoteChar;
-        char _argSeparator;
-        string _str;
-        int _strLen;
-        int _charIndex;
+        // Readonly fields
+        private readonly char _quoteChar;
+        private readonly char _argSeparator;
+        private readonly string _str;
+        private readonly int _strLen;
+
+        // State fields
+        private int _charIndex;
+        private bool _foundSeparator;
         internal int _currentTokenIndex;
         internal int _currentTokenLength;
-        bool _foundSeparator;
     }
 }

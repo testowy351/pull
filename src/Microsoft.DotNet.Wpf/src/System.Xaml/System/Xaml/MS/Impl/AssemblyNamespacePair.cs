@@ -10,12 +10,12 @@ using System.Reflection;
 namespace System.Xaml.MS.Impl
 {
     [DebuggerDisplay("{ClrNamespace} {Assembly.FullName}")]
-    internal class AssemblyNamespacePair
+    internal readonly struct AssemblyNamespacePair
     {
-        WeakReference _assembly;
-        String _clrNamespace;
+        private readonly WeakReference _assembly;
+        private readonly string _clrNamespace;
 
-        public AssemblyNamespacePair(Assembly asm, String clrNamespace)
+        public AssemblyNamespacePair(Assembly asm, string clrNamespace)
         {
             _assembly = new WeakReference(asm);
             _clrNamespace = clrNamespace;

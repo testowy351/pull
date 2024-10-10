@@ -232,18 +232,14 @@ namespace System.Xaml.Schema
         {
             Assembly asm = SchemaContext.OnAssemblyResolve(assemblyName);
             if (asm == null)
-            {
                 return null;
-            }
 
-            List<AssemblyNamespacePair> onePair = new List<AssemblyNamespacePair>();
-            onePair.Add(new AssemblyNamespacePair(asm, clrNs));
-            return onePair;
+            return new List<AssemblyNamespacePair>(1) { new AssemblyNamespacePair(asm, clrNs) };
         }
 
         private Type SearchAssembliesForShortName(string shortName)
         {
-            foreach(AssemblyNamespacePair assemblyNamespacePair in _assemblyNamespaces)
+            foreach (AssemblyNamespacePair assemblyNamespacePair in _assemblyNamespaces)
             {
                 Assembly asm = assemblyNamespacePair.Assembly;
                 if (asm == null)

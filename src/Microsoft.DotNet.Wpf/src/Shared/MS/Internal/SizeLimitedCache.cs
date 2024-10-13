@@ -5,8 +5,6 @@
 using System;
 using System.Collections.Generic;
 
-using MS.Internal.PresentationCore;
-
 namespace MS.Internal
 {
     /// <summary>
@@ -90,20 +88,13 @@ namespace MS.Internal
         /// </param>
         public void Add(K key, V resource, bool isPermanent)
         {
-
-            if ( (object)key == null)
-            {
-                throw new ArgumentNullException("key");
-            }
-            if ( (object)resource == null)
-            {
-                throw new ArgumentNullException("resource");
-            }
+            ArgumentNullException.ThrowIfNull(key, nameof(key));
+            ArgumentNullException.ThrowIfNull(resource, nameof(resource));
 
             // note: [] throws, thus we should check if its in the dictionary first.
-            if (!_nodeLookup.ContainsKey(key))
+            if (!_nodeLookup.TryGetValue(key, out Node node))
             {
-                Node node = new Node(key, resource, isPermanent);
+                node = new Node(key, resource, isPermanent);
                 if (!isPermanent)
                 {
                     if (IsFull())
@@ -116,11 +107,11 @@ namespace MS.Internal
                 {
                     _permanentCount++;
                 }
+
                 _nodeLookup[key] = node;
             }
             else
             {
-                Node node = _nodeLookup[key];
                 if (!node.IsPermanent)
                 {
                     RemoveFromList(node);
